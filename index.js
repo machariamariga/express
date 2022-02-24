@@ -5,6 +5,45 @@ app.use(express.json());
 
 var connection = require("./database");
 app.get("/trainees", (req, res) => {
+  let sql = `CALL all_records()`;
+  connection.query(sql, [true], (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    res.send(results[0]);
+  });
+});
+app.get("/trainees/:id", (req, res) => {
+  var id = req.params.id;
+  let sql = `CALL fine(${id})`;
+  connection.query(sql, [true], (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    res.send(results[0]);
+  });
+});
+app.delete("/trainees/:id", (req, res) => {
+  var id = req.params.id;
+  let sql = `CALL delete_one(${id})`;
+  connection.query(sql, [true], (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    res.send(results);
+  });
+});
+app.post("/trainees", (req, res) => {
+  var id = req.params.id;
+  let sql = `CALL add_one("${req.body.firstname}", "${req.body.secondname}","${req.body.email}","${req.body.project}","${req.body.password}","${req.body.id}")`;
+  connection.query(sql, [true], (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    res.send(results);
+  });
+});
+/*app.get("/trainees", (req, res) => {
   connection.query("select * from trainees", function (err, rows) {
     if (!err) res.send(rows);
     else console.log(err);
@@ -28,7 +67,7 @@ app.post("/trainees", (req, res) => {
       console.log(err);
     }
   );
-});
+});*/
 
 app.listen(4000, function () {
   console.log("App listening on port 4000");
